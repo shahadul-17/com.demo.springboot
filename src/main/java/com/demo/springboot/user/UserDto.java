@@ -1,5 +1,6 @@
 package com.demo.springboot.user;
 
+import com.demo.springboot.address.AddressDto;
 import com.demo.springboot.core.text.JsonSerializer;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -7,6 +8,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Set;
 
 @Getter
 @Setter
@@ -29,6 +32,8 @@ public class UserDto {
     private String lastName;
 
     private String dateOfBirth;
+
+    private Set<AddressDto> addresses;
 
     @Override
     public String toString() {

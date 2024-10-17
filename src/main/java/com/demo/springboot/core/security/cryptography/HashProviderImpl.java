@@ -13,8 +13,6 @@ import java.security.MessageDigest;
 @Scope(scopeName = "singleton")
 public class HashProviderImpl implements HashProvider {
 
-    HashProviderImpl() { }
-
     @Override
     public byte[] computeHash(byte[] bytes, HashAlgorithm algorithm) throws Exception {
         // creates an instance of message digest...

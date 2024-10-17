@@ -1,11 +1,11 @@
 package com.demo.springboot.user;
 
-import jakarta.annotation.Nullable;
+import com.demo.springboot.address.AddressEntity;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "user_entity")
@@ -30,4 +30,18 @@ public class UserEntity {
 
     @Column(nullable = true)
     private Date dateOfBirth;
+
+    @ManyToMany(
+            fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE,
+                    CascadeType.DETACH,
+                    CascadeType.REFRESH,
+            })
+    @JoinTable(
+            name = "USER_ADDRESS_MAPPING",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "address_id"))
+    private Set<AddressEntity> addresses;
 }
