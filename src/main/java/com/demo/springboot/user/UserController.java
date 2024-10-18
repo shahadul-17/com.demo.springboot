@@ -3,7 +3,12 @@ package com.demo.springboot.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 
 @RestController
 @RequestMapping("/v{version}/user")
@@ -11,6 +16,8 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    // private SecurityContext securityContext = SecurityContextHolder.getContext().getAuthentication();
 
     @PostMapping("/auth/signup")
     public ResponseEntity<UserDto> createUser(

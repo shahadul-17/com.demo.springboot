@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -109,6 +110,11 @@ public class UserServiceImpl implements UserService {
         cachedUserRepositoryByEmail.save(new CachedUserEntityByEmail(userEntity));
 
         return userEntity;
+    }
+
+    @Override
+    public Optional<UserEntity> findByCreationDateEx(Date createdAt) {
+        return repository.findByCreationDateEx(createdAt);
     }
 
     @Override

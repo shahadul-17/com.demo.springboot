@@ -4,6 +4,7 @@ import com.demo.springboot.core.utilities.StringUtilities;
 import com.demo.springboot.core.utilities.ThreadUtilities;
 import com.demo.springboot.security.UserDetails;
 import com.demo.springboot.user.UserEntity;
+import com.demo.springboot.user.UserService;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -16,10 +17,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Date;
+
 @RestController
 @RequestMapping(path = "v{version}/ping")
 public class PingController {
 
+    @Autowired
+    private UserService userService;
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
@@ -34,6 +39,10 @@ public class PingController {
         }
 
         System.out.println(userEntity.toString());
+
+        final var x = userService.findByCreationDateEx(new Date(userEntity.getCreatedAt().getTime() - 90_000));
+
+        System.out.println(x.isEmpty() ? "USER NOT PRESENT" : x + " ----USER PRESENT----------");
 
         redisTemplate.opsForValue().set(REDIS_KEY_PREFIX + "hello", "World");
 
