@@ -12,6 +12,30 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @PostMapping("/signup")
+    public ResponseEntity<UserDto> createUser(
+            @PathVariable final String version,
+            @RequestBody final UserRegistrationDto registration
+    ) {
+        final var _user = userService.signup(registration);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(_user);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<UserDto> createUser(
+            @PathVariable final String version,
+            @RequestBody final UserLoginDto loginDto
+    ) {
+        final var _user = userService.login(loginDto);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(_user);
+    }
+
     @PostMapping
     public ResponseEntity<UserDto> createUser(
             @PathVariable final String version,
@@ -27,7 +51,7 @@ public class UserController {
     @PutMapping("/{userId}")
     public ResponseEntity<UserDto> updateUser(
             @PathVariable final String version,
-            @PathVariable final Long userId,
+            @PathVariable final String userId,
             @RequestBody final UserDto user
     ) {
         // setting the user ID...

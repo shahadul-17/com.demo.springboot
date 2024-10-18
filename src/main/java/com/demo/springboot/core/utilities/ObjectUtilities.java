@@ -17,14 +17,12 @@ public final class ObjectUtilities {
      * @param object Object from which the map shall be prepared.
      * @return A map containing all the attributes of an object.
      */
-    public static Map<String, Object> toMap(Object object) {
+    public static Map<String, Object> toMap(final Object object) {
         // first, we need to serialize the object as JSON...
-        var json = JsonSerializer.serialize(object);
-        // then we shall deserialize the JSON as map...
-        Map<String, Object> map = JsonSerializer.deserializeAsMap(json);
+        final var json = JsonSerializer.serialize(object);
 
-        // finally, we shall return the map...
-        return map;
+        // then we shall deserialize the JSON as map and return the map...
+        return JsonSerializer.deserializeAsMap(json);
     }
 
     /**
@@ -36,13 +34,12 @@ public final class ObjectUtilities {
      * @param <Type> Type of the object.
      * @return An object of the specified type containing all the attributes of the map.
      */
-    public static <Type> Type fromMap(Map<String, Object> map, Class<Type> classOfType) {
+    public static <Type> Type fromMap(final Map<String, Object> map, final Class<Type> classOfType) {
         // first, we need to serialize the map as JSON...
         final var json = JsonSerializer.serialize(map);
-        // then we shall deserialize the JSON as the specified class object...
-        final Type object = JsonSerializer.deserialize(json, classOfType);
 
-        // finally, we shall return the object...
-        return object;
+        // then we shall deserialize the JSON as the specified class object
+        // and return the object...
+        return JsonSerializer.deserialize(json, classOfType);
     }
 }

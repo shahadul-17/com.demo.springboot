@@ -2,13 +2,14 @@ package com.demo.springboot.user;
 
 import com.demo.springboot.address.AddressDto;
 import com.demo.springboot.core.text.JsonSerializer;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
+import com.demo.springboot.core.utilities.StringUtilities;
+import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 
+import java.util.Date;
 import java.util.Set;
 
 @Getter
@@ -17,21 +18,25 @@ import java.util.Set;
 public class UserDto {
 
     @NotNull
-    private Long userId = 0L;
+    private String userId = StringUtilities.getEmptyString();
 
     @NotNull
-    private Long entityVersion = 0L;
-
-    @NotNull
-    @Min(1)
-    @Max(1)
+    @NotBlank
+    @Length(min = 1, max = 64)
     private String firstName;
 
-    @Min(1)
-    @Max(64)
+    @Length(min = 1, max = 64)
     private String lastName;
 
-    private String dateOfBirth;
+    @NotNull
+    @NotBlank
+    @Email
+    @Length(min = 1, max = 512)
+    private String email;
+
+    private Date createdAt;
+
+    private Date updatedAt;
 
     private Set<AddressDto> addresses;
 
