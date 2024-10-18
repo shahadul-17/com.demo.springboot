@@ -4,7 +4,9 @@ import com.demo.springboot.core.security.cryptography.HashAlgorithm;
 import com.demo.springboot.core.security.cryptography.HashProvider;
 import com.demo.springboot.core.text.Encoding;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PasswordEncoder implements org.springframework.security.crypto.password.PasswordEncoder {
 
     @Autowired

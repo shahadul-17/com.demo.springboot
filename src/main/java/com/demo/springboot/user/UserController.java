@@ -12,7 +12,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/signup")
+    @PostMapping("/auth/signup")
     public ResponseEntity<UserDto> createUser(
             @PathVariable final String version,
             @RequestBody final UserRegistrationDto registration
@@ -24,8 +24,8 @@ public class UserController {
                 .body(_user);
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<UserDto> createUser(
+    @PostMapping("/auth/login")
+    public ResponseEntity<LoginResponseDto> createUser(
             @PathVariable final String version,
             @RequestBody final UserLoginDto loginDto
     ) {

@@ -1,6 +1,7 @@
 package com.demo.springboot.user;
 
 import com.demo.springboot.address.AddressMapper;
+import com.demo.springboot.auth.JwtService;
 import com.demo.springboot.core.security.cryptography.HashAlgorithm;
 import com.demo.springboot.core.security.cryptography.HashProvider;
 import com.demo.springboot.core.text.Encoding;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -24,6 +27,7 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
 
     private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+
     @Autowired
     private UserRepository repository;
     @Autowired
@@ -34,6 +38,8 @@ public class UserServiceImpl implements UserService {
     private CachedUserRepositoryByEmail cachedUserRepositoryByEmail;
     @Autowired
     private HashProvider hashProvider;
+    @Autowired
+    private JwtService jwtService;
 
     @Override
     public UserEntity findByUserId(final Long userId) {
@@ -148,7 +154,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto login(final UserLoginDto loginDto) {
+    public LoginResponseDto login(final UserLoginDto loginDto) {
         final var userEntity = findByEmail(loginDto.getEmail());
 
         if (userEntity == null) {
@@ -168,7 +174,7 @@ public class UserServiceImpl implements UserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect password provided.");
         }
 
-        return UserDto.builder()
+        final var user = UserDto.builder()
                 .userId(userEntity.getPublicId())
                 .firstName(userEntity.getFirstName())
                 .lastName(userEntity.getLastName())
@@ -176,11 +182,19 @@ public class UserServiceImpl implements UserService {
                 .createdAt(userEntity.getCreatedAt())
                 .updatedAt(userEntity.getUpdatedAt())
                 .build();
+
+        final var accessToken = jwtService.generateToken(userEntity);
+
+        final var loginResponse = new LoginResponseDto();
+        loginResponse.setUser(user);
+        loginResponse.setAccessToken(accessToken);
+
+        return loginResponse;
     }
 
     @Override
     public UserDto createUser(final UserDto user) {
-        final var userEntity = new UserEntity();
+        /*final var userEntity = new UserEntity();
         userEntity.setUserId(0L);
         userEntity.setFirstName(user.getFirstName());
         userEntity.setLastName(user.getLastName());
@@ -191,9 +205,9 @@ public class UserServiceImpl implements UserService {
 
         // if addresses are present...
         if (addresses != null && !addresses.isEmpty()) {
-            userEntity.setAddresses(AddressMapper.INSTANCE.fromDto(addresses));
+            // userEntity.setAddresses(AddressMapper.INSTANCE.fromDto(addresses));
 
-            /*final Set<AddressEntity> addressEntities = new HashSet<>();
+            *//*final Set<AddressEntity> addressEntities = new HashSet<>();
 
             for (final var address : addresses) {
                 final var addressEntity = new AddressEntity();
@@ -205,7 +219,7 @@ public class UserServiceImpl implements UserService {
                 addressEntities.add(addressEntity);
             }
 
-            userEntity.setAddresses(addressEntities);*/
+            userEntity.setAddresses(addressEntities);*//*
         }
 
         final var savedUserEntity = repository.saveAndFlush(userEntity);
@@ -217,7 +231,7 @@ public class UserServiceImpl implements UserService {
         if (savedAddressEntities != null && !savedAddressEntities.isEmpty()) {
             user.setAddresses(AddressMapper.INSTANCE.toDto(savedAddressEntities));
 
-            /*final Set<AddressDto> _addresses = new HashSet<>();
+            *//*final Set<AddressDto> _addresses = new HashSet<>();
 
             for (final var addressEntity : savedAddressEntities) {
                 _addresses.add(AddressDto.builder()
@@ -228,10 +242,12 @@ public class UserServiceImpl implements UserService {
                         .build());
             }
 
-            user.setAddresses(_addresses);*/
+            user.setAddresses(_addresses);*//*
         }
 
-        return user;
+        return user;*/
+
+        return null;
     }
 
     @Override
@@ -247,6 +263,15 @@ public class UserServiceImpl implements UserService {
 
         user.setUserId(savedUserEntity.getPublicId());
         // user.setEntityVersion(savedUserEntity.getEntityVersion());
+
+        return user;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
+        final var user = findByEmail(username);
+
+        if (user == null) { throw new UsernameNotFoundException("No user account associated with the email '" + username + "'."); }
 
         return user;
     }

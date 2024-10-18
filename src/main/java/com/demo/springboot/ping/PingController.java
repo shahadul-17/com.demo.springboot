@@ -2,10 +2,14 @@ package com.demo.springboot.ping;
 
 import com.demo.springboot.core.utilities.StringUtilities;
 import com.demo.springboot.core.utilities.ThreadUtilities;
+import com.demo.springboot.security.UserDetails;
+import com.demo.springboot.user.UserEntity;
+import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,10 +27,13 @@ public class PingController {
 
     @GetMapping
     public ResponseEntity<PingDto> ping(
-            @PathVariable final String version) {
+            @PathVariable final String version,
+            @AuthenticationPrincipal UserEntity userEntity) {
         if (!"1.0".equals(version)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unsupported version (" + version + ") provided.");
         }
+
+        System.out.println(userEntity.toString());
 
         redisTemplate.opsForValue().set(REDIS_KEY_PREFIX + "hello", "World");
 
